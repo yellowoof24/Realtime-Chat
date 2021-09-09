@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>Realtime Chat</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  </head>
+  <body>
+      <div id="messages">
+
+      </div>
+      <form id="Send">
+          <input type="text" id="msg" placeholder="Message">
+          <input type="submit" placeholder="Send">
+      </form>
+      <script>
+        var socket = io.connect("URL을 넣어주새여");
+        socket.on("connect", () => {
+            console.log("Connected")
+            if (!$.cookie("name")) {
+                a = prompt("이름", "User")
+                $.cookie("name", a, {
+                    httponly: true, maxAge: 1000 * 60 * 60 * 24
+                })
+                socket.emit('join', {"name": a})
+            }else{
+                socket.emit('join', {"name": $.cookie("name")})
+            }
+        })
+
+        $("#Send").on("submit", (e) => {
+            e.preventDefault()
+            socket.emit("chat", {"name": $.cookie("name"), "msg": $("#msg").val()})
+            $("#msg").val("").focus()
+        })
+
+        socket.on("join", (data) => {
+            $('#messages').append(`<div><strong>[Server]: </strong>${data.name}님이 입장하셨습니다.</div>`)
+        })
+
+        socket.on("chat", (data) => {
+            $('#messages').append(`<div><strong>[${data.name}]: </strong>${data.msg}</div>`)
+        })
+    </script>
+  </body>
+</html>
