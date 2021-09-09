@@ -3,7 +3,7 @@ from flask_socketio import SocketIO
 import re
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'yellowoof24ishacker'
+app.config['SECRET_KEY'] = 'SECRET KEY'
 socketio = SocketIO(app)
 
 @app.route("/")
